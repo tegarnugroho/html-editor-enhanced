@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:html_editor_enhanced/utils/utils.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
+import 'package:image_picker/image_picker.dart' as source_type;
 
 /// Toolbar widget class
 class ToolbarWidget extends StatefulWidget {
@@ -1966,20 +1968,28 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                     left: 5, right: 5),
                                                 elevation: 0.0),
                                             onPressed: () async {
-                                              result = await FilePicker.platform
-                                                  .pickFiles(
-                                                type: FileType.image,
-                                                withData: true,
-                                                allowedExtensions: widget
-                                                    .htmlToolbarOptions
-                                                    .imageExtensions,
+                                              final image =
+                                                  await ImagePicker().pickImage(
+                                                source: source_type
+                                                    .ImageSource.gallery,
+                                                imageQuality: 70,
+                                                maxWidth: 1440,
                                               );
-                                              if (result?.files.single.name !=
-                                                  null) {
-                                                setState(() {
-                                                  filename.text =
-                                                      result!.files.single.name;
-                                                });
+                                              if (image != null) {
+                                                var size = await image.length();
+                                                result = FilePickerResult([
+                                                  PlatformFile(
+                                                      name: image.name,
+                                                      size: size,
+                                                      path: image.path)
+                                                ]);
+                                                if (result?.files.single.name !=
+                                                    null) {
+                                                  setState(() {
+                                                    filename.text = result!
+                                                        .files.single.name;
+                                                  });
+                                                }
                                               }
                                             },
                                             child: Text('Choose image',
