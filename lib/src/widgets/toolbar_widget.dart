@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -1975,21 +1976,22 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
                                                 imageQuality: 70,
                                                 maxWidth: 1440,
                                               );
+                                              print('image ${image?.path}');
+                                              print('name ${image?.name}');
                                               if (image != null) {
                                                 var size = await image.length();
+                                                var bytes = await File(image.path).readAsBytes();
                                                 result = FilePickerResult([
                                                   PlatformFile(
-                                                      name: image.name,
-                                                      size: size,
-                                                      path: image.path)
+                                                    name: image.name,
+                                                    size: size,
+                                                    path: image.path,
+                                                    bytes: bytes,
+                                                  )
                                                 ]);
-                                                if (result?.files.single.name !=
-                                                    null) {
-                                                  setState(() {
-                                                    filename.text = result!
-                                                        .files.single.name;
-                                                  });
-                                                }
+                                                setState(() {
+                                                  filename.text = image.name;
+                                                });
                                               }
                                             },
                                             child: Text('Choose image',
